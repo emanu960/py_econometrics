@@ -17,3 +17,12 @@ After calling the class, you have different functions:
 3. t returns the vector of t statistics
 4. p value returns the p value vector
 5. summary returns a tabulate version of the model with all data you need.
+
+
+
+
+*******************************************
+THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
+*******************************************
+
+NEXT STEP: hypothesis tests
