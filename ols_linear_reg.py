@@ -75,7 +75,6 @@ class ols_lr():
                     if i == j:
                         std.append(np.sqrt(avar[i, j]))
 
-
         return std
 
     def t(self):
