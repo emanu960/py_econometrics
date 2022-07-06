@@ -7,6 +7,7 @@ import seaborn as sns
 import scipy
 from tabulate import tabulate
 
+
 class ols_lr():
     def __init__(self, data , x, y, cons = True, method = 'non_robust'):
         self.x = x
@@ -46,7 +47,7 @@ class ols_lr():
 
         first_part = np.linalg.inv(np.matmul(np.transpose(X), X))
         second_part = np.matmul(np.transpose(X), Y)
-        return np.matmul(first_part, second_part).reshape((1, len(self.x)+1))
+        return np.matmul(first_part, second_part).reshape((1, X.shape[1]))
 
     def residuals(self):
         return self.prepare_data().get('Y') - np.matmul(self.prepare_data().get('X'), np.transpose(self.betas()))
@@ -54,7 +55,7 @@ class ols_lr():
     def std(self):
         if self.method == 'non_robust':
             ssr = np.matmul(np.transpose(self.residuals()), self.residuals())
-            dfg = 1 / (len(self.prepare_data().get('df')) - len(self.x))
+            dfg = 1 / (len(self.prepare_data().get('df')) - self.prepare_data().get('X').shape[1])
             estimated_var = ssr * dfg
             xxinv = np.linalg.inv(np.matmul(np.transpose(self.prepare_data().get('X')), self.prepare_data().get('X')))
             avar = np.multiply(estimated_var, xxinv)
@@ -105,6 +106,8 @@ class ols_lr():
         vars =  self.x +['cons']
         vec = [vars, self.betas()[0], self.std(), self.t(), self.p_value(), self.confidence().get('low'), self.confidence().get('high')]
         vec = list(map(list, zip(*vec)))
+
+
 
 
         print('---------------------------------------------------------------')

@@ -6,6 +6,7 @@ df = pd.read_csv('mroz.csv')
 
 print(df)
 
-obj = ols.ols_lr(data = df,y = 'lwage', x = ['exper', 'expersq', 'educ', 'age', 'kidslt6', 'kidsge6'], method ='robust')
+obj = ols.ols_lr(data = df,y = 'lwage', x = ['exper', 'expersq', 'educ', 'age', 'kidslt6', 'kidsge6'], method ='non_robust', cons = False)
 
 print(obj.summary())
+
