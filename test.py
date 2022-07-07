@@ -10,3 +10,8 @@ obj = ols.ols_lr(data = df,y = 'lwage', x = ['exper', 'expersq', 'educ', 'age', 
 
 print(obj.summary())
 
+
+
+diagno = ols.diagnostic(obj,var_to_test=['age', 'kidslt6', 'kidsge6'])
+
+print(diagno.F_statistic())
