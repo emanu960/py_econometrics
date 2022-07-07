@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import scipy
 from tabulate import tabulate
+import copy
+from scipy import stats
 
 
 class ols_lr():
@@ -113,6 +115,18 @@ class ols_lr():
         print('---------------------------------------------------------------')
         print(tabulate(vec, headers=header))
         print('---------------------------------------------------------------')
+        return ' '
+
+
+
+#---------------------------------------------------------------------
+
+
+#                        DIAGNOSTIC                            #
+
+
+#---------------------------------------------------------------------
+
 
 
 
@@ -124,23 +138,71 @@ class diagnostic(ols_lr):
         self.var_to_test = var_to_test
         self.method = class_ols_sr.method
 
-    def F_statistic(self):
-        restricted_var = [i for i in self.x if i not in self.var_to_test]
-        restricted = ols_lr(data =self.data , x = restricted_var, y = self.y)
-        residuals1 = restricted.residuals()
-        ssr1 = np.matmul(np.transpose(residuals1), residuals1)
-        y1_mean = np.mean(restricted.prepare_data().get('Y'))
-        unrestricted = ols_lr(data =self.data , x = self.x, y = self.y)
-        residuals2= unrestricted.residuals()
-        y2_mean = np.mean(unrestricted.prepare_data().get('Y'))
-        ssr2 = np.matmul(np.transpose(residuals2), residuals2)
-        tss2 = np.sum((unrestricted.prepare_data().get('Y') - y2_mean)**2)
-        tss1 = np.sum((restricted.prepare_data().get('Y') - y1_mean) ** 2)
-        r1 = 1-(ssr1/tss1)
-        r2 = 1 - (ssr2 / tss2)
-        n = len(unrestricted.prepare_data().get('Y'))
-        k2 = unrestricted.prepare_data().get('X').shape[1]
-        k1 =restricted.prepare_data().get('X').shape[1]-1
-        one = (r2-r1)/(1-r2)
-        two = (n-k2)/k1
-        return {'F':one * two,'p_value':  1-scipy.stats.f.cdf(one * two, k1, n-k2)} #find p-value of F test statistic  }
+    def F_test(self):
+        if self.method == 'non_robust':
+            restricted_var = [i for i in self.x if i not in self.var_to_test]
+            restricted = ols_lr(data=self.data, x=restricted_var, y=self.y)
+            residuals1 = restricted.residuals()
+            ssr1 = np.matmul(np.transpose(residuals1), residuals1)
+            y1_mean = np.mean(restricted.prepare_data().get('Y'))
+            unrestricted = ols_lr(data=self.data, x=self.x, y=self.y)
+            residuals2 = unrestricted.residuals()
+            y2_mean = np.mean(unrestricted.prepare_data().get('Y'))
+            ssr2 = np.matmul(np.transpose(residuals2), residuals2)
+            tss2 = np.sum((unrestricted.prepare_data().get('Y') - y2_mean) ** 2)
+            tss1 = np.sum((restricted.prepare_data().get('Y') - y1_mean) ** 2)
+            r1 = 1 - (ssr1 / tss1)
+            r2 = 1 - (ssr2 / tss2)
+            n = len(unrestricted.prepare_data().get('Y'))
+            k2 = unrestricted.prepare_data().get('X').shape[1]
+            k1 = restricted.prepare_data().get('X').shape[1] - 1
+            one = (r2 - r1) / (1 - r2)
+            two = (n - k2) / k1
+            return {'F': one * two,
+                    'p_value': 1 - scipy.stats.f.cdf(one * two, k1, n - k2)}  # find p-value of F test statistic  }
+
+
+        elif self.method == 'robust':
+            return 'F test is not valid for robust regression. Please use another test'
+
+
+
+
+    def wald_test(self,test = 'testing_zero'):
+
+        if self.method == 'robust':
+            reg = ols_lr(data=self.data, x=self.x, y=self.y, method='robust')
+            # add cons to the key variables
+            labels = self.x + ['cons']
+            # retrive the array of beta coefficieitns
+            B = reg.betas()[0]
+            # transpose for using matmul
+            B_trasp = B.reshape((len(labels), 1))
+
+            # compute the robust variance covariance matrix of B
+            xxinv = np.linalg.inv(np.matmul(np.transpose(reg.prepare_data().get('X')), reg.prepare_data().get('X')))
+            B = np.dot(np.transpose(reg.prepare_data().get('X')), reg.prepare_data().get('X') * reg.residuals() ** 2)
+            avar = np.matmul(np.matmul(xxinv, B), xxinv)
+
+            # this is in case we want simply to test bjs = 0
+
+            if test == 'testing_zero':
+                R = np.zeros((len(self.var_to_test), len(self.x) + 1))
+                for q in range(len(self.var_to_test)):
+                    index = labels.index(self.var_to_test[q])
+                    R[q, index] = 1
+                RB = np.matmul(R, B_trasp)
+                r = np.zeros((len(self.var_to_test), 1))
+                RVR = np.linalg.inv(np.matmul(np.matmul(R, avar), np.transpose(R)))
+                RBminus = (RB - r)
+
+                # the wald test is divided by Q to have a F distribution with Q and n-Q degree of freedom
+                W = np.matmul(np.matmul(np.transpose(RBminus), RVR), RBminus) / len(self.var_to_test)
+
+            return {'Wald test': W, 'p_value': 1 - scipy.stats.f.cdf(W, len(self.var_to_test),
+                                                                     len(reg.prepare_data().get('df')) - len(
+                                                                         self.var_to_test))}
+
+
+
+

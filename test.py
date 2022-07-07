@@ -6,7 +6,7 @@ df = pd.read_csv('mroz.csv')
 
 print(df)
 
-obj = ols.ols_lr(data = df,y = 'lwage', x = ['exper', 'expersq', 'educ', 'age', 'kidslt6', 'kidsge6'], method ='non_robust', cons = False)
+obj = ols.ols_lr(data = df,y = 'lwage', x = ['exper', 'expersq', 'educ', 'age', 'kidslt6', 'kidsge6'], method ='robust')
 
 print(obj.summary())
 
@@ -14,4 +14,4 @@ print(obj.summary())
 
 diagno = ols.diagnostic(obj,var_to_test=['age', 'kidslt6', 'kidsge6'])
 
-print(diagno.F_statistic())
+print(diagno.wald_test())
