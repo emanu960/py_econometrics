@@ -26,3 +26,8 @@ THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YO
 *******************************************
 
 NEXT STEP: hypothesis tests
+
+
+#############################################
+IF YOU WANT TO USE IT RIGHT NOW, YOU HAVE TO USE LINEARMODELS
+#############################################
