@@ -10,7 +10,7 @@ obj = ols.ols_lr(data = df,y = 'lbwght', x = ['male', 'parity', 'lfaminc', 'pack
 
 diagnostic = ols.diagnostic(obj, ['packs'])
 
-print(obj.summary())
+print(obj.fitted())
 
 print(diagnostic.F_test())
 
