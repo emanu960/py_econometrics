@@ -29,5 +29,9 @@ NEXT STEP: hypothesis tests
 
 
 #############################################
+
+
 IF YOU WANT TO USE IT RIGHT NOW, YOU HAVE TO USE LINEARMODELS
+
+
 #############################################
