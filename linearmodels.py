@@ -130,6 +130,15 @@ class ols_lr():
         return ' '
 
 
+################################################################à
+
+
+
+#2SLS LINEAR REGRESSION
+
+
+################################################################à
+
 class two_sls():
     def __init__(self, data , exogenous,endogenous, instruments, y, method = 'non_robust'):
         self.exogenous = exogenous
