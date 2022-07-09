@@ -99,6 +99,8 @@ The 2SLS regression model can be called by using the class *two_sls* in the main
 - *instruments* is the list of strings of all instrument variables to explain the endogenous one. They must not be in exogenous list.
 **It is very important that you pass a list of strings even if your explanatory variable is just one variable.**
 
+- *method* is "non_robust" by default, but if you want to a Heteroskedastcity robust variance covariance matrix, just declare *method = 'robust'* 
+
 ###### Features
 - To summarize the results, just call "your object name" . *summary()*. For now, it will print just the table with betas, std, t, p value, and confidence
 interval.
