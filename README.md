@@ -65,11 +65,11 @@ cons        0.875164    0.120301      7.27478        0      0.639374     1.11095
 
 ```
 
-
+*******************************************
 ###### Warning
 
 **The method used to find betas is the OLS estimation. This means that you will need your model to satsify different assumptions and one of them is the full rank. This means that if you want X'X to be invertible, X must be full rank.**
-
+*******************************************
 
 
 
@@ -77,7 +77,7 @@ cons        0.875164    0.120301      7.27478        0      0.639374     1.11095
 ### Two stage least squares
 
 ###### Inputs
-The OLS linear regression model can be called by using the class *ols* in the main file. To call this class, you need the following inputs:
+The 2SLS regression model can be called by using the class *two_sls* in the main file. To call this class, you need the following inputs:
 
 - *data* is the dataframe where you stored your data you want to pass in the ols model.
 - *x* is the list of strings of all explanatory variables you want to use to explain y. I mean the strings of the columns that store your x's variables.
