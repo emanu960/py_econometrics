@@ -225,11 +225,24 @@ class two_sls():
         Y = self.prepare_df_second_stage().get('Y')
         X_hat = self.prepare_df_second_stage().get('X_hat')
         beta = (self.betas())
-
         residuals = Y - np.matmul(X, beta)
-        ssr = np.matmul(np.transpose(residuals), residuals)
-        sigma_hat = ssr / (len(X) - X.shape[1])
-        SIGMA = sigma_hat * np.linalg.inv(np.matmul(np.transpose(X_hat), X_hat))
+
+        if self.method == 'non_robust':
+
+            ssr = np.matmul(np.transpose(residuals), residuals)
+            sigma_hat = ssr / (len(X) - X.shape[1])
+            SIGMA = sigma_hat * np.linalg.inv(np.matmul(np.transpose(X_hat), X_hat))
+            return SIGMA
+
+        elif self.method == 'robust':
+            xxinv = np.linalg.inv(np.matmul(np.transpose(X_hat), X_hat))
+            B = np.dot(np.transpose(X_hat), X_hat * residuals ** 2)
+
+            dgf = (len(Y)) / (len(Y) - X_hat.shape[1])
+
+            SIGMA = np.matmul(np.matmul(xxinv, B), xxinv) *dgf
+
+
         return SIGMA
 
     def std(self):
