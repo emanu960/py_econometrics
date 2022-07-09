@@ -65,12 +65,6 @@ cons        0.875164    0.120301      7.27478        0      0.639374     1.11095
 
 ```
 
-*******************************************
-###### Warning
-
-**The method used to find betas is the OLS estimation. This means that you will need your model to satsify different assumptions and one of them is the full rank. This means that if you want X'X to be invertible, X must be full rank.**
-*******************************************
-
 
 
 
