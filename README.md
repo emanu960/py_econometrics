@@ -154,13 +154,4 @@ The output is:
 THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
 *******************************************
 
-NEXT STEP: hypothesis tests
 
-
-#############################################
-
-
-IF YOU WANT TO USE IT RIGHT NOW, YOU HAVE TO USE LINEARMODELS
-
-
-#############################################
