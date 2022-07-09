@@ -13,6 +13,20 @@ a comparison with others statistic programs.
 Remember: For now, the "main file" is the *linearmodels.py* file. 
 
 
+## Modules requires 
+
+In order to use this module you will need the following modules:
+
+- Pandas  (dataframe manipulation)
+- Numpy   (matrix operations)
+- Copy    (make some usefull replication of the dataframe)
+- Tabulate (Prints the final summary)
+- Scipy  (Computing p value) 
+
+
+
+
+
 ## Models
 ### OLS linear regression model
 
@@ -149,6 +163,15 @@ The output is:
 {'Wald test': array([[0.3063074]]), 'p_value': array([[0.73632229]])}
 
 ```
+
+
+## How to use it on a Google colaboratory notebook
+
+- Open your colab notebook and launch the kernel.
+- In the file folder (the temporary folder where you can upload every csv and other file), upload the *linearmodels.py* file and your csv or what else.
+- Import linearmodels as lm in your notebook (as lm is optional).
+- Finally you can now work with it .
+
 
 *******************************************
 THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
