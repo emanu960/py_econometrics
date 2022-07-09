@@ -125,14 +125,30 @@ INSTRUMENTS: ['exper', 'expersq', 'kidslt6', 'kidsge6', 'motheduc', 'fatheduc', 
 ```
 
 
+## Hypothesis testing
+
+The module allows you to perfor hypthotesis testing on the explanatory variables of your regression model. I implemented the Wald Test divided properly to make sure that it has a F distribution. The Wald Test can be used to test joint significance of variables with a proper R matrix. You can also implement your R matrix if you want to test different hyphotesis, but for now you can use just the standard R matrix.
+
+To use this, you have first to initilize the model to test and then pass the model with the list of variables to test.
 
 
+###### Example 
 
+```
 
+model = lm.two_sls(data = df, exogenous=['exper','expersq','kidslt6','kidsge6'],y = 'lwage', endogenous=['educ'], instruments = ['motheduc','fatheduc','huseduc'] )
 
+print(lm.Wald_test(model, ['kidslt6','kidsge6']))
 
+```
 
+The output is:
 
+```
+
+{'Wald test': array([[0.3063074]]), 'p_value': array([[0.73632229]])}
+
+```
 
 *******************************************
 THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
