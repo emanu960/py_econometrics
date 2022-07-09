@@ -70,6 +70,57 @@ cons        0.875164    0.120301      7.27478        0      0.639374     1.11095
 
 **The method used to find betas is the OLS estimation. This means that you will need your model to satsify different assumptions and one of them is the full rank. This means that if you want X'X to be invertible, X must be full rank.**
 
+
+
+
+
+### Two stage least squares
+
+###### Inputs
+The OLS linear regression model can be called by using the class *ols* in the main file. To call this class, you need the following inputs:
+
+- *data* is the dataframe where you stored your data you want to pass in the ols model.
+- *x* is the list of strings of all explanatory variables you want to use to explain y. I mean the strings of the columns that store your x's variables.
+**It is very important that you pass a list of strings even if your explanatory variable is just one variable.**
+- *y* is the string of the column that stores your dependent variable in your dataframe.
+- *cons* is True by default, but if you want to regress without intercept, just declare *cons = False* .
+- *method* is "non_robust" by default, but if you want to a Heteroskedastcity robust variance covariance matrix, just declare *method = 'robust'* 
+
+###### Features
+- To summarize the results, just call "your object name" . *summary()*. For now, it will print just the table with betas, std, t, p value, and confidence
+interval.
+
+- Use *betas()* if you want to obtain beta coefficients.
+
+- Use *fitted()* if you want fitted values.
+
+- Use *residuals()* if you want residuals.
+
+###### Example 
+
+To initialize the model:
+
+```
+model  = lm.ols(data = df, x=['exper','expersq','kidslt6','kidsge6'],y = 'lwage')
+```
+
+To call the informative summary:
+```
+model.summary()
+```
+
+And here is the output:
+
+
+
+
+
+
+
+
+
+
+
 *******************************************
 THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
 *******************************************
