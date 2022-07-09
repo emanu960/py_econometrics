@@ -44,7 +44,24 @@ To initialize the model:
 model  = lm.ols(data = df, x=['exper','expersq','kidslt6','kidsge6'],y = 'lwage')
 ```
 
+To call the informative summary:
+```
+model.summary()
+```
 
+And here is the output:
+```
+Linear regression
+---------------------------------------------------------------
+lwage      coefficient           se          t    p_value       low 95       high 95
+-------  -------------  -----------  ---------  ---------  -----------  ------------
+exper       0.0456439   0.0141809     3.21869        0      0.0178494    0.0734385
+expersq    -0.00101304  0.000417998  -2.42356        0.02  -0.00183232  -0.000193768
+kidslt6     0.0314494   0.0892375     0.352424       0.72  -0.143456     0.206355
+kidsge6    -0.0345768   0.0283234    -1.22079        0.22  -0.0900906    0.020937
+cons        0.875164    0.120301      7.27478        0      0.639374     1.11095
+---------------------------------------------------------------
+```
 
 *******************************************
 THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
