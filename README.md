@@ -61,7 +61,14 @@ kidslt6     0.0314494   0.0892375     0.352424       0.72  -0.143456     0.20635
 kidsge6    -0.0345768   0.0283234    -1.22079        0.22  -0.0900906    0.020937
 cons        0.875164    0.120301      7.27478        0      0.639374     1.11095
 ---------------------------------------------------------------
+
+
 ```
+
+
+###### Warning
+
+**The method used to find betas is the OLS estimation. This means that you will need your model to satsify different assumptions and one of them is the full rank. This means that if you want X'X to be invertible, X must be full rank.**
 
 *******************************************
 THIS IS NOT THE FINAL PROJECT. I WILL ADD STEP BY STEP ALL THE FUNCTIONS THAT YOU NEED FORO YOUR ECONOMETRIC WORK.
