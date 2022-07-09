@@ -9,6 +9,9 @@ from tabulate import tabulate
 import copy
 from scipy import stats
 
+
+
+
 ################################################################à
 
 
@@ -20,12 +23,14 @@ from scipy import stats
 
 
 class ols_lr():
+
     def __init__(self, data , x, y, cons = True, method = 'non_robust'):
         self.x = x
         self.y = y
         self.data = data
         self.cons = cons
         self.method = method
+        self.status = 'ols'
 
 
     #prepare the dataframe
@@ -67,29 +72,30 @@ class ols_lr():
     def residuals(self):
         return self.prepare_data().get('Y') - np.matmul(self.prepare_data().get('X'), np.transpose(self.betas()))
 
-    def std(self):
+    def variance_covariance(self):
         if self.method == 'non_robust':
             ssr = np.matmul(np.transpose(self.residuals()), self.residuals())
             dfg = 1 / (len(self.prepare_data().get('df')) - self.prepare_data().get('X').shape[1])
             estimated_var = ssr * dfg
             xxinv = np.linalg.inv(np.matmul(np.transpose(self.prepare_data().get('X')), self.prepare_data().get('X')))
             avar = np.multiply(estimated_var, xxinv)
-            std = []
-            for i in range(avar.shape[1]):
-                for j in range(avar.shape[1]):
-                    if i == j:
-                        std.append(np.sqrt(avar[i, j]))
 
         elif self.method == 'robust':
-            xxinv= np.linalg.inv(np.matmul(np.transpose(self.prepare_data().get('X')), self.prepare_data().get('X')))
-            B = np.dot(np.transpose(self.prepare_data().get('X')), self.prepare_data().get('X')* self.residuals()**2)
+            xxinv = np.linalg.inv(np.matmul(np.transpose(self.prepare_data().get('X')), self.prepare_data().get('X')))
+            B = np.dot(np.transpose(self.prepare_data().get('X')), self.prepare_data().get('X') * self.residuals() ** 2)
 
             avar = np.matmul(np.matmul(xxinv, B), xxinv)
-            std = []
-            for i in range(avar.shape[1]):
-                for j in range(avar.shape[1]):
-                    if i == j:
-                        std.append(np.sqrt(avar[i, j]))
+
+        return avar
+
+    def std(self):
+
+        avar = self.variance_covariance()
+        std = []
+        for i in range(avar.shape[1]):
+            for j in range(avar.shape[1]):
+                if i == j:
+                    std.append(np.sqrt(avar[i, j]))
 
         return std
 
@@ -122,7 +128,6 @@ class ols_lr():
         vec = [vars, self.betas()[0], self.std(), self.t(), self.p_value(), self.confidence().get('low'), self.confidence().get('high')]
         vec = list(map(list, zip(*vec)))
 
-
         print('Linear regression')
         print('---------------------------------------------------------------')
         print(tabulate(vec, headers=header))
@@ -130,13 +135,24 @@ class ols_lr():
         return ' '
 
 
+################################################################à
+
+
+
+#2SLS LINEAR REGRESSION
+
+
+################################################################à
+
 class two_sls():
+
     def __init__(self, data , exogenous,endogenous, instruments, y, method = 'non_robust'):
         self.exogenous = exogenous
         self.endogenous = endogenous
         self.instruments = instruments
         self.y = y
         self.data = data
+        self.status = '2sls'
 
         self.method = method
 
@@ -198,7 +214,13 @@ class two_sls():
             beta_iv = np.matmul(inve, final_part)
             return beta_iv
 
-    def std(self):
+    def residuals(self):
+        X = self.prepare_df_second_stage().get('X')
+        Y = self.prepare_df_second_stage().get('Y')
+        beta = (self.betas())
+        return Y - np.matmul(X, beta)
+
+    def variance_covariance(self):
         X = self.prepare_df_second_stage().get('X')
         Y = self.prepare_df_second_stage().get('Y')
         X_hat = self.prepare_df_second_stage().get('X_hat')
@@ -206,8 +228,13 @@ class two_sls():
 
         residuals = Y - np.matmul(X, beta)
         ssr = np.matmul(np.transpose(residuals), residuals)
-        sigma_hat = ssr/ (len(X)- X.shape[1])
+        sigma_hat = ssr / (len(X) - X.shape[1])
         SIGMA = sigma_hat * np.linalg.inv(np.matmul(np.transpose(X_hat), X_hat))
+        return SIGMA
+
+    def std(self):
+
+        SIGMA = self.variance_covariance()
         std_dv = []
         for i in range(SIGMA.shape[0]):
             for j in range(SIGMA.shape[1]):
@@ -216,18 +243,42 @@ class two_sls():
 
         return std_dv
 
+    def t_stat(self):
+        betas = self.betas()
+        std = self.std()
+        t= []
+        for i in range(len(betas)):
+            t.append((betas[i]/ std[i])[0])
+
+        return t
+
+    def p_value(self):
+        tvec = self.t_stat()
+        pvalues = np.zeros(len(tvec))
+        for i in range(len(tvec)):
+            pvalues[i] = round(scipy.stats.norm.sf(abs(tvec[i])) * 2, 2)
+        return pvalues
+
+    def confidence(self):
+        betas = np.array(self.betas()).reshape(1, len(self.betas()))[0]
+        std = np.array(self.std())
+        low = betas - 1.96 * std
+        high = betas + 1.96 * std
+
+
+        return {'low': low, 'high': high}
 
     def summary(self):
-        header = [self.y, 'coefficient', 'se']
+        header = [self.y, 'coefficient', 'se','t', 'p_value', 'low 95', 'high 95']
         table = []
         vars =  ['cons' ] + self.exogenous+ self.endogenous
-        vec = [vars, self.betas(), self.std()]
+        vec = [vars, self.betas(), self.std(), self.t_stat(), self.p_value(), self.confidence().get('low'), self.confidence().get('high')]
         vec = list(map(list, zip(*vec)))
 
         print('2SlS Regression')
-        print('---------------------------------------------------------------')
+        print('---------------------------------------------------------------------------------')
         print(tabulate(vec, headers=header))
-        print('---------------------------------------------------------------')
+        print('---------------------------------------------------------------------------------')
         print(f'INSTRUMENTED: {self.endogenous}')
         print(f'INSTRUMENTS: {self.exogenous+self.instruments}')
 
@@ -235,12 +286,51 @@ class two_sls():
 
 
 
-df = pd.read_csv('mroz.csv')
-
-obj = two_sls(data = df, exogenous=['exper', 'expersq'],y = 'lwage', endogenous=['educ'], instruments = ['motheduc', 'fatheduc','huseduc'] )
+################################################################à
 
 
 
-print(obj.summary())
+                #HYPHOTHESIS TESTS
+
+
+################################################################à
+
+
+def Wald_test(model, var_to_test,test = 'testing_zero'):
+    if model.status == '2sls':
+        labels = ['cons'] + model.exogenous + model.endogenous
+        n = len(model.prepare_df_second_stage().get('Y'))
+
+    elif model.status == 'ols':
+        labels = model.x + ['cons']
+        n = model.prepare_data().get('df')
+
+    #retrive the array of beta coefficients
+
+    B = model.betas()
+    avar = model.variance_covariance()
+
+    # this is in case we want simply to test bjs = 0
+
+    if test == 'testing_zero':
+        R = np.zeros((len(var_to_test), len(labels)))
+        for q in range(len(var_to_test)):
+            index = labels.index(var_to_test[q])
+            R[q, index] = 1
+        RB = np.matmul(R, B)
+        r = np.zeros((len(var_to_test), 1))
+        RVR = np.linalg.inv(np.matmul(np.matmul(R, avar), np.transpose(R)))
+        RBminus = (RB - r)
+
+        # the wald test is divided by Q to have a F distribution with Q and n-Q degree of freedom
+        W = np.matmul(np.matmul(np.transpose(RBminus), RVR), RBminus) / len(var_to_test)
+    #
+
+    return {'Wald test': W, 'p_value': 1 - scipy.stats.f.cdf(W, len(var_to_test),
+                                                             n - len(
+                                                                 var_to_test))}
+
+
+
 
 

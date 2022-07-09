@@ -1,17 +1,9 @@
 import pandas as pd
 import numpy as np
-import ols_linear_reg as ols
+import linearmodels as lm
 
-df = pd.read_csv('body.csv')
+df = pd.read_csv('mroz.csv')
 
-print(df)
+obj = lm.two_sls(data = df, exogenous=['exper','expersq','kidslt6','kidsge6'],y = 'lwage', endogenous=['educ'], instruments = ['motheduc','fatheduc','huseduc'] )
 
-obj = ols.ols_lr(data = df,y = 'lbwght', x = ['male', 'parity', 'lfaminc', 'packs'])
-
-diagnostic = ols.diagnostic(obj, ['packs'])
-
-print(obj.fitted())
-
-print(diagnostic.F_test())
-
-
+print(lm.Wald_test(obj,['kidslt6','kidsge6']))
