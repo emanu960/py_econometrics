@@ -22,7 +22,7 @@ from scipy import stats
 ################################################################à
 
 
-class ols_lr():
+class ols():
 
     def __init__(self, data , x, y, cons = True, method = 'non_robust'):
         self.x = x
@@ -176,7 +176,7 @@ class two_sls():
         z_features = self.exogenous + self.instruments
         X_hat = []
         for i in range(Xk.shape[1]):
-            reg = ols_lr(data = df, y = self.endogenous[i], x = z_features)
+            reg = ols(data = df, y = self.endogenous[i], x = z_features)
             fitted = reg.fitted()
             X_hat.append(fitted)
 
