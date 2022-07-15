@@ -1,16 +1,9 @@
 #import modules
 
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import scipy
 from tabulate import tabulate
-import copy
 from scipy import stats
-
-
-
 
 ################################################################à
 
@@ -320,7 +313,7 @@ def Wald_test(model, var_to_test,test = 'testing_zero'):
 
     #retrive the array of beta coefficients
 
-    B = model.betas()
+    B = model.betas().reshape((len(labels),1))
     avar = model.variance_covariance()
 
     # this is in case we want simply to test bjs = 0
@@ -339,9 +332,7 @@ def Wald_test(model, var_to_test,test = 'testing_zero'):
         W = np.matmul(np.matmul(np.transpose(RBminus), RVR), RBminus) / len(var_to_test)
     #
 
-    return {'Wald test': W, 'p_value': 1 - scipy.stats.f.cdf(W, len(var_to_test),
-                                                             n - len(
-                                                                 var_to_test))}
+    return {'Wald test': W[0][0], 'p_value': 1 - (scipy.stats.f.cdf(W[0][0],len(var_to_test), (n - len(var_to_test))))}
 
 
 
